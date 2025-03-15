@@ -9,6 +9,7 @@ RUN pip install numpy==1.24.3
 # Config working directory
 WORKDIR /app
 COPY . /app
+ENV PYTHONPATH="/app"
 
 # Jupyter port
 EXPOSE 8888
