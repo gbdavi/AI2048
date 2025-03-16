@@ -16,6 +16,11 @@ class Game2048Env(gym.Env):
         # 0: up, 1: down, 2: left, 3: right
         self.action_space = spaces.Discrete(4)
 
+    def _log2_transform(self, grid):
+        """Apply log2 transformation while handling zeros safely."""
+        transformed = np.where(grid > 0, np.log2(grid), 0)  # Log2 for nonzero, keep zeros as 0
+        return transformed
+
     def reset(self):
         # Reset the game and return the initial state
         self.game = Game2048(size=4)
@@ -33,20 +38,25 @@ class Game2048Env(gym.Env):
         prev_score = self.game.score
 
         # Make the move
-        self.game.move(move)
-        new_score = self.game.score
+        if self.game.move(move):
+            new_score = self.game.score
 
-        # Calculate reward: difference in score
-        reward = new_score - prev_score
+            # Calculate reward: difference in score
+            reward = new_score - prev_score
+        else:
+            reward = -50
 
         # Check if the game is over
         done = self.game.game_over
 
+        # Get transformed state
+        new_state = self._log2_transform(self.game.grid)
+        
         # No additional information needed
         info = {}
 
         # Return new state, reward, done flag, and info
-        return self.game.grid, reward, done, info
+        return new_state, reward, done, info
 
     def render(self, mode='human'):
         # Display the game grid and score

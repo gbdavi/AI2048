@@ -71,7 +71,7 @@ class Game2048:
         :param direction: Direction to move ('up', 'down', 'left', 'right')
         """
         if self.game_over:
-            return
+            return False
         
         original_grid = self.grid.copy() 
         
@@ -97,9 +97,13 @@ class Game2048:
         if not np.array_equal(original_grid, new_grid):
             self.score += score_gain
             self._add_new_tile()
+        else:
+            return False        
 
         if not self._can_move():
             self.game_over = True
+            
+        return True
 
     def _can_move(self):
         """
