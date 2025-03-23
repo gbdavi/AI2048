@@ -18,7 +18,7 @@ class Game2048Env(gym.Env):
 
     def _log2_transform(self, grid):
         """Apply log2 transformation while handling zeros safely."""
-        transformed = np.where(grid > 0, np.log2(grid), 0)  # Log2 for nonzero, keep zeros as 0
+        transformed = np.log2(np.where(grid > 0, grid, 1))
         return transformed
 
     def reset(self):
